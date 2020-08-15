@@ -1,0 +1,2 @@
+# hekate
+C++ FSM library.
