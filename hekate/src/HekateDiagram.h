@@ -11,6 +11,12 @@
 #include <forward_list>
 #include <iterator>
 
+// REWRITE PLANS:
+// so vector of state becomes map of long to state
+// add a new map of long to group
+// state no longer store its tags, only its unique id
+// both longs refer to the position of the string name in the tag map
+
 namespace Hekate {
 
 	template <typename TDiagram>
@@ -85,10 +91,26 @@ namespace Hekate {
 		void CopyTransitions (long from, TIt iterator) const {
 		
 			std::copy_if(std::begin(m_transitions), std::end(m_transitions),
-				iterator, [](const Transition &t) => bool {
+				iterator, [](const Transition &t) -> bool {
 					return t.m_from.count(from) > 0;
 				}
 			);
+		}
+
+	public:
+
+		// setter functions
+		long CreateState (InnerState &&iState) {
+		
+			// look for smallest unused ID
+			long id = 0;
+			while (m_tags.find(id) != m_tags.end()) {
+				++id;
+			}
+
+			// create the state with the id
+
+		
 		}
 	
 	};
