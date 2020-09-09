@@ -12,9 +12,7 @@ namespace Hekate {
 	template <typename TState, typename TTransition>
 	class Diagram {
 
-		// primitive/stl type aliases
-		using stateid = long;
-		using transid = size_t;
+		// stl type aliases
 		using Group = std::set<stateid>;
 
 		// inner type aliases
@@ -33,15 +31,15 @@ namespace Hekate {
 		// all the ids here must be negative
 		std::map<stateid, Group> m_groups;
 
-		// a map of id-to-tags
-		std::map<stateid, std::string> m_tags;
+		// a map of id-to-names
+		std::map<stateid, std::string> m_names;
 
 		// a map of id-to-transitions
 		std::map<transid, TransType> m_transitions;
 
 		// the starting ID of this state machine;
 		// must be positive (aka start from state, not group)
-		stateid m_startPoint;
+		stateid m_startPoint { undefinedState };
 
 		// a map of conditionals and their default values
 		std::map<std::string, bool> m_conditions;

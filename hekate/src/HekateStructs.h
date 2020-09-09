@@ -27,7 +27,7 @@ namespace Hekate {
 
 		// default copy and move constructor
 		State (const State &rhs) = default;
-		State (State &&rhs) = default;
+		State (State &&rhs) noexcept = default;
 	};
 
 	// a wrapper of a transition type,
@@ -48,13 +48,14 @@ namespace Hekate {
 
 		// forwarding constructor
 		template <typename ...Ts>
-		Transition (stateid from, stateid to, Ts &&...args) : 
+		Transition (transid id, stateid from, stateid to, Ts &&...args) : 
+			m_id { id },
 			m_from { from }, m_to { to }, 
 			m_inner { std::forward<Ts>(args)... } {}
 
 		// default copy and move constructor
 		Transition (const Transition &rhs) = default;
-		Transition (Transition &&rhs) = default;
+		Transition (Transition &&rhs) noexcept = default;
 	};
 
 }
