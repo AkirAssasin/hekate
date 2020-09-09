@@ -7,6 +7,5 @@ struct ExampleTransition {};
 int main () {
 
 	using Diagram = Hekate::Diagram<ExampleState, ExampleTransition>;
-	using Agent = Hekate::Agent<Diagram>;
 
 }

@@ -19,5 +19,17 @@
     <ClInclude Include="src\HekateDiagram.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\HekateStructs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HekateAgent.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HekateDeclarations.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HekateDiagram.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
