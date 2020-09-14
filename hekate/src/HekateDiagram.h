@@ -12,6 +12,13 @@ namespace Hekate {
 	template <typename TState, typename TTransition>
 	class Diagram {
 
+		// self-alias
+		using DiagramType = Diagram<TState, TTransition>;
+
+		// agent alias
+		template <typename I>
+		using AgentType = Agent<DiagramType, I>;
+
 		// stl type aliases
 		using Group = std::set<stateid>;
 
@@ -102,6 +109,13 @@ namespace Hekate {
 		// remove a condition from a transition
 		void RemoveConditionFromTransition (const std::string &con, transid id);
 	
+		// initialize an agent
+		template <typename I>
+		void InitializeAgent (AgentType<I> &agent) const;
+
+		// update agent's transition list
+		template <typename I>
+		void UpdateAgentTransitions (AgentType<I> &agent) const;
 	};
 	
 }

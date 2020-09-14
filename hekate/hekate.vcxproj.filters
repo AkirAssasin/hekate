@@ -31,5 +31,8 @@
     <ClInclude Include="src\HekateDiagram.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\HekateAgent.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

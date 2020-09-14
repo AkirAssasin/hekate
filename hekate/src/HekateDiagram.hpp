@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "HekateDiagram.h"
+#include "HekateAgent.h"
 
 namespace Hekate {
 
@@ -302,6 +303,67 @@ namespace Hekate {
 	void Diagram<S, T>::RemoveConditionFromTransition (const std::string &con, transid id) {
 	
 		m_transitions.find(id)->second.m_conditions.erase(con);
+	}
+
+	// initialize an agent
+	template <typename S, typename T>
+	template <typename I>
+	void Diagram<S, T>::InitializeAgent (AgentType<I> &agent) const {
+	
+		// copy all conditions' default values
+		agent.m_conditions = m_conditions;
+
+		// set current state to start point
+		auto fs { m_states.find(m_startPoint) };
+		if (fs == m_states.cend()) {
+			agent.m_currentState = std::nullopt;
+		} else {
+			agent.m_currentState = fs->second;
+		}
+
+		// set transition to null
+		agent.m_currentTransition = std::nullopt;
+
+		// update agent transitions
+		UpdateAgentTransitions(agent);
+	}
+
+	// update agent's transition list
+	template <typename S, typename T>
+	template <typename I>
+	void Diagram<S, T>::UpdateAgentTransitions (AgentType<I> &agent) const {
+	
+		// clear original list
+		agent.m_transitions.clear();
+
+		// stop if agent doesn't have state
+		if (!agent.m_currentState.has_value()) return;
+		StateType &currentState { *agent.m_currentState };
+
+		// look through all transitions
+		for (auto const &i : m_transitions) {
+			
+			// look through all from-ids
+			bool found { false };
+			for (auto const &k : i.second.m_from) {
+
+				// check if same group or id
+				if (k < 0) {
+					if (currentState.m_groups.count(k) > 0) {
+						found = true;
+						break;
+					}
+				} else {
+					if (currentState.m_id == k) {
+						found = true;
+						break;
+					}
+				}
+			}
+
+			// add into list if found
+			if (found) agent.m_transitions.push_front(i.second);
+		}
 	}
 
 }

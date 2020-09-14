@@ -1,17 +1,26 @@
 // <insert file header>
-/*
+
 #pragma once
+
+#include <map>
+#include <optional>
+#include <string>
+#include <forward_list>
 
 namespace Hekate {
 
-	template <typename TDiagram>
-	class Agent {
+	template <typename TDiagram, typename TInterpreter>
+	class Agent : public TInterpreter {
 	public:
 
-		// using aliases from the target diagram type
+		// using aliases
 		using Diagram = TDiagram;
-		using State = typename TDiagram::State;
-		using Transition = typename TDiagram::Transition;
+		using StateType = typename TDiagram::StateType;
+		using TransType = typename TDiagram::TransType;
+		using Interpreter = TInterpreter;
+
+		// give access to diagram
+		friend class Diagram;
 
 	private:
 
@@ -22,50 +31,24 @@ namespace Hekate {
 		std::map<std::string, bool> m_conditions;
 
 		// the current state of this agent in the diagram
-		long m_currentID;
-		std::optional<State> m_currentState;
-		std::optional<Transition> m_currentTransition;
+		std::optional<StateType> m_currentState;
+		std::optional<TransType> m_currentTransition;
 
 		// a list of possible transitions
-		std::forward_list<Transition> m_transitions;
+		std::forward_list<TransType> m_transitions;
 
 	public:
 
-		// construct from a machine
-		Agent (const Diagram &diagram) : 
-			m_diagram { diagram },
-			m_conditions { m_diagram.m_conditions },
-			m_currentID { m_diagram.m_startPoint },
-			m_currentState { m_diagram.CopyState(m_currentID).m_inner },
-			m_transitions {},
-			m_currentTransition { std::nullopt } {
-
-			m_diagram.CopyTransitions(m_currentID, std::front_inserter(m_transitions));
-		}
+		// construct from a diagram
+		template <typename ...Ts>
+		Agent (const Diagram &diagram, Ts &&...args);
 
 		// update function
-		void Update () {
+		void Update ();
 
-			if (m_currentState.has_value()) {
-
-				m_currentState->Update();
-
-				if (m_currentState->IsUnlocked()) {
-
-					for (Transition &t : m_transitions) {
-
-
-
-					}
-
-				}
-
-			} else if (m_currentTransition.has_value()) {
-
-			}
-
-		}
-
-
+		// set condition value
+		void SetConditionValue (const std::string &name, bool value);
 	};
-}*/
+}
+
+#include "HekateAgent.hpp"

@@ -10,4 +10,8 @@ namespace Hekate {
 
 	// undefineds
 	constexpr stateid undefinedState = 0;
+
+	// class declarations
+	template <typename TDiagram, typename TInterpreter>
+	class Agent;
 }

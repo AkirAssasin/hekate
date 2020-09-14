@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\HekateAgent.h" />
+    <ClInclude Include="src\HekateAgent.hpp" />
     <ClInclude Include="src\HekateDeclarations.h" />
     <ClInclude Include="src\HekateDiagram.h" />
     <ClInclude Include="src\HekateDiagram.hpp" />
