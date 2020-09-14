@@ -74,6 +74,33 @@ namespace Hekate {
 
 		// get a reference to the string-name of an id
 		std::string& GetName (stateid id);
+
+		// get a reference to the string-name of an id (const)
+		const std::string& GetName (stateid id) const;
+
+		// get an id of a string-name
+		stateid GetID (const std::string &name) const;
+
+		// debug-print all data
+		void DebugOut (std::ostream &stream) const;
+
+		// add a new transition condition
+		void AddNewCondition (const std::string &name, bool val = false);
+
+		// remove a transition condition
+		void RemoveCondition (const std::string &name);
+
+		// get a reference to the transition condition's default value
+		bool& GetConditionDefault (const std::string &name);
+
+		// rename a condition
+		void RenameCondition (const std::string &oldName, const std::string &newName);
+
+		// set a condition to a transition
+		void SetConditionToTransition (const std::string &con, transid id, bool conVal);
+
+		// remove a condition from a transition
+		void RemoveConditionFromTransition (const std::string &con, transid id);
 	
 	};
 	

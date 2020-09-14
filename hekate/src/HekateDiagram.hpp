@@ -72,8 +72,8 @@ namespace Hekate {
 	stateid Diagram<S, T>::AddNewGroup () {
 
 		// add new group
-		stateid id { FindUnoccupiedKey(m_states, -1, -1) };
-		m_groups.emplace(id, {});
+		stateid id { FindUnoccupiedKey<stateid, Group>(m_groups, -1, -1) };
+		m_groups.emplace(id, Group{});
 
 		// add new name
 		m_names[id] = "New Group";
@@ -95,8 +95,8 @@ namespace Hekate {
 			m_states.find(stateID)->second.m_groups.erase(id);
 		}
 
-		// remove all transitions from group
-		for (std::pair<transid, TransType> &pair : m_transitions) {
+		// remove group from all transitions
+		for (auto &pair : m_transitions) {
 
 			TransType &trans { pair.second };
 			trans.m_from.erase(id);
@@ -153,6 +153,155 @@ namespace Hekate {
 	std::string& Diagram<S, T>::GetName (stateid id) {
 
 		return m_names.find(id)->second;
+	}
+
+	// get a reference to the string-name of an id
+	template <typename S, typename T>
+	const std::string& Diagram<S, T>::GetName (stateid id) const {
+
+		return m_names.find(id)->second;
+	}
+
+	// get an id of a string-name
+	template <typename S, typename T>
+	stateid Diagram<S, T>::GetID (const std::string &name) const {
+	
+		for (auto &i : m_names) {
+		
+			if (i.second == name) return i.first;
+		}
+		return undefinedState;
+	}
+
+	// debug-print all data
+	template <typename S, typename T>
+	void Diagram<S, T>::DebugOut (std::ostream &stream) const {
+	
+		// print all states
+		stream << "States:" << std::endl;
+		for (auto const &i : m_states) {
+		
+			stream << i.first << ") " << GetName(i.first) << std::endl;
+		}
+
+		// print all groups
+		stream << "\nGroups:" << std::endl;
+		for (auto const &i : m_groups) {
+		
+			stream << i.first << ") ";
+			for (stateid k : i.second) {
+				stream << GetName(k) << ", ";
+			}
+			stream << "is part of " << GetName(i.first) << std::endl;
+		}
+
+		// print all conditions
+		stream << "\nConditions (default values):" << std::endl;
+		for (auto const &i : m_conditions) {
+		
+			stream << i.first << " = " << i.second << std::endl;
+		}
+
+		// print all transitions
+		stream << "\nTransitions:" << std::endl;
+		for (auto const &i : m_transitions) {
+		
+			// print from and to
+			stream << i.first << ") ";
+			for (stateid k : i.second.m_from) {
+				stream << GetName(k) << ", ";
+			}
+			stream << "to " << GetName(i.second.m_to) << " (when";
+
+			// print conditions
+			for (auto const &k : i.second.m_conditions) {
+				stream << ", " << k.first << " = " << k.second;
+			}
+			stream << ")" << std::endl;
+		}
+	
+	}
+
+	// add a new transition condition
+	template <typename S, typename T>
+	void Diagram<S, T>::AddNewCondition (const std::string &name, bool val) {
+	
+		if (m_conditions.find(name) == m_conditions.end()) {
+			m_conditions.emplace(name, val);
+		}
+	}
+
+	// remove a transition condition
+	template <typename S, typename T>
+	void Diagram<S, T>::RemoveCondition (const std::string &name) {
+	
+		// stop if name doesn't exist
+		auto ni { m_conditions.find(name) };
+		if (ni == m_conditions.end()) return;
+
+		// remove the condition in all transitions
+		for (auto &i : m_transitions) {
+
+			i.second.m_conditions.erase(name);
+		}
+
+		// erase from default-value map
+		m_conditions.erase(ni);
+	}
+
+	// get a reference to the transition condition's default value
+	template <typename S, typename T>
+	bool& Diagram<S, T>::GetConditionDefault (const std::string &name) {
+	
+		return m_conditions.find(name)->second;
+	}
+
+	// rename a condition
+	template <typename S, typename T>
+	void Diagram<S, T>::RenameCondition (const std::string &oldName, const std::string &newName) {
+
+		// stop if old name doesn't exist
+		auto oi { m_conditions.find(oldName) };
+		if (oi == m_conditions.end()) return;
+
+		// stop if new name is already occupied
+		if (m_conditions.find(newName) != m_conditions.end()) return;
+
+		// change the condition name in all transitions
+		for (auto &i : m_transitions) {
+		
+			// find and replace
+			auto &cons { i.second.m_conditions };
+			auto f { cons.find(oldName) };
+			if (f != cons.end()) {
+
+				cons.emplace(newName, f->second);
+				cons.erase(f);
+			}
+		}
+
+		// change the condition name in default-value map
+		m_conditions.emplace(newName, oi->second);
+		m_conditions.erase(oi);
+	}
+
+	// add a condition to a transition
+	template <typename S, typename T>
+	void Diagram<S, T>::SetConditionToTransition (const std::string &con, transid id, bool conVal) {
+	
+		// add new condition if it doesn't exist
+		AddNewCondition(con);
+
+		// set the value in the transition condition map
+		m_transitions.find(id)->second.m_conditions[con] = conVal;
+
+	}
+
+	// remove a condition from a transition
+	template <typename S, typename T>
+	void Diagram<S, T>::RemoveConditionFromTransition (const std::string &con, transid id) {
+	
+		m_transitions.find(id)->second.m_conditions.erase(con);
 	}
 
 }
