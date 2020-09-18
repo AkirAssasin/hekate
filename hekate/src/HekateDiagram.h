@@ -11,6 +11,7 @@ namespace Hekate {
 
 	template <typename TState, typename TTransition>
 	class Diagram {
+	public:
 
 		// self-alias
 		using DiagramType = Diagram<TState, TTransition>;
@@ -29,6 +30,8 @@ namespace Hekate {
 		// wrapper type aliases
 		using StateType = State<InnerStateType>;
 		using TransType = Transition<InnerTransType>;
+
+	private:
 	
 		// a map of id-to-states;
 		// all the ids here must be positive
@@ -116,6 +119,13 @@ namespace Hekate {
 		// update agent's transition list
 		template <typename I>
 		void UpdateAgentTransitions (AgentType<I> &agent) const;
+
+		// update agent's current state
+		template <typename I>
+		void UpdateAgentState (AgentType<I> &agent, stateid id) const;
+
+		// set starting point
+		void SetStartingState (stateid id);
 	};
 	
 }

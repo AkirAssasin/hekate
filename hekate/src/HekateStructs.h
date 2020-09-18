@@ -26,8 +26,12 @@ namespace Hekate {
 			m_inner { std::forward<Ts>(args)... } {}
 
 		// default copy and move constructor
-		State (const State &rhs) = default;
-		State (State &&rhs) noexcept = default;
+		State (const State<T> &rhs) = default;
+		State (State<T> &&rhs) noexcept = default;
+
+		// default copy and move assignment
+		State<T>& operator= (const State<T> &rhs) = default;
+		State<T>& operator= (State<T> &&rhs) noexcept = default;
 	};
 
 	// a wrapper of a transition type,
@@ -54,8 +58,12 @@ namespace Hekate {
 			m_inner { std::forward<Ts>(args)... } {}
 
 		// default copy and move constructor
-		Transition (const Transition &rhs) = default;
-		Transition (Transition &&rhs) noexcept = default;
+		Transition (const Transition<T> &rhs) = default;
+		Transition (Transition<T> &&rhs) noexcept = default;
+
+		// default copy and move assignment
+		Transition<T>& operator= (const Transition<T> &rhs) = default;
+		Transition<T>& operator= (Transition<T> &&rhs) noexcept = default;
 	};
 
 }

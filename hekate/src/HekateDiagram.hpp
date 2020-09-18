@@ -184,6 +184,7 @@ namespace Hekate {
 		
 			stream << i.first << ") " << GetName(i.first) << std::endl;
 		}
+		stream << "starting state is [" << m_startPoint << "] a.k.a. " << GetName(m_startPoint) << std::endl;
 
 		// print all groups
 		stream << "\nGroups:" << std::endl;
@@ -366,4 +367,22 @@ namespace Hekate {
 		}
 	}
 
+	// update agent's current state
+	template <typename S, typename T>
+	template <typename I>
+	void Diagram<S, T>::UpdateAgentState (AgentType<I> &agent, stateid id) const {
+	
+		// set the agent's current state to the given id
+		agent.m_currentState = m_states.find(id)->second;
+
+		// update agent transitions
+		UpdateAgentTransitions(agent);
+	}
+
+	// set starting point
+	template <typename S, typename T>
+	void Diagram<S, T>::SetStartingState (stateid id) {
+	
+		m_startPoint = id;
+	}
 }

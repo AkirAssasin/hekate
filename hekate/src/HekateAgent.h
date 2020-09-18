@@ -20,7 +20,7 @@ namespace Hekate {
 		using Interpreter = TInterpreter;
 
 		// give access to diagram
-		friend class Diagram;
+		friend Diagram;
 
 	private:
 

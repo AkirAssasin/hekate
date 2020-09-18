@@ -39,6 +39,7 @@ namespace Hekate {
 	template <typename D, typename I>
 	void Agent<D, I>::Update () {
 	
+		// check if currently running state
 		if (m_currentState.has_value()) {
 			
 			// pass inner state to interpreter
@@ -51,23 +52,26 @@ namespace Hekate {
 				for (auto const &i : m_transitions) {
 				
 					// try to match conditions
-					if (MatchMap(m_conditions, i.second.m_conditions)) {
+					if (MatchMap(m_conditions, i.m_conditions)) {
 
 						// if matched, change to transition
-						m_currentTransition = i.second;
+						m_currentTransition = i;
 						m_currentState = std::nullopt;
 					}
 				}
 			}
 
-		} else if (m_currentTransition.has_value()) {
+		}
+		
+		// run transition immediately if state has ended - no else statement
+		if (m_currentTransition.has_value()) {
 		
 			// pass inner state to interpreter
 			bool transable { I::UpdateTransition(m_currentTransition->m_inner) };
 
 			// ask interpreter if transition is allowed
 			if (transable) {
-				m_currentState = m_diagram.hmmmmmmm
+				m_diagram.UpdateAgentState(*this, m_currentTransition->m_to);
 				m_currentTransition = std::nullopt;
 			}
 		}
@@ -75,6 +79,9 @@ namespace Hekate {
 
 	// set condition value
 	template <typename D, typename I>
-	void Agent<D, I>::SetConditionValue (const std::string &name, bool value);
+	void Agent<D, I>::SetConditionValue (const std::string &name, bool value) {
+	
+		m_conditions.find(name)->second = value;
+	}
 
 }
